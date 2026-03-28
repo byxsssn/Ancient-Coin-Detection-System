@@ -1,0 +1,9 @@
+.idea/
+
+data/
+
+runs/
+
+weights/
+
+*.pt

@@ -1,0 +1,6 @@
+train: data/train/images
+val: data/valid/images
+test: data/test/images
+
+nc: 6
+names: [ 'LiaoJinXiaXiYuan', 'MingQing', 'PreQin_BuCoin', 'PreQin_DaoCoin', 'QinHanWeiJinNanBei', 'SongDynasty' ]
