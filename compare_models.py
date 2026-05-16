@@ -6,8 +6,8 @@ from ultralytics import YOLO
 
 BASE_DIR = Path(__file__).resolve().parent
 DEFAULT_MODELS = {
+    "v8n_768": "best_models/coin_v8n_768_best.pt",
     "release_v8s_768": "best_models/coin_v8s_768_best.pt",
-    "coin_v8s_768": "runs/detect/coin_v8s_768/weights/best.pt",
 }
 
 

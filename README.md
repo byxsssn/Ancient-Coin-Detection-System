@@ -7,7 +7,9 @@
 ## 📝 Introduction (项目简介)
 
 本项目是一个集**深度学习目标检测**与**历史文化科普**于一体的古钱币智能识别系统。
-系统基于 **YOLOv8** 算法，能够精准识别并分类六大类中国古代钱币。通过 **PySide6** 驱动的 GUI 界面，用户可实现一键上传、智能检测及历史背景查询。
+系统基于 **YOLOv8** 算法，面向六类中国古代钱币图像完成目标检测。通过 **PySide6** 驱动的 GUI 界面，用户可实现图片上传、检测结果展示、置信度调节、结果保存及历史背景查询。
+
+当前实验数据集由 395 张古钱币图像组成，使用 Roboflow 完成目标框标注，并划分为训练集 278 张、验证集 60 张、测试集 57 张。项目没有额外生成本地离线增强图片，训练阶段使用 YOLOv8 默认训练流程中的在线增强策略。原始训练图片仅保留在本地 `data2_grouped/`，不随 GitHub 仓库上传。
 
 ## 📸 System Showcase (功能演示)
 
@@ -23,20 +25,21 @@
 
 ## 🚀 Key Features (核心亮点)
 
-- **High Precision**: 核心模型采用 YOLOv8s-768，测试集 mAP50 达到 **0.9729**，mAP50-95 达到 **0.9324**。
-- **Interactive GUI**: 基于 PySide6 开发，支持图片上传、结果实时渲染与列表展示。
-- **Knowledge Base**: 内置古钱币历史知识库，实现“识别+科普”的双重功能。
-- **Performance Optimized**: 针对 RTX 4060 Laptop GPU 深度调优，单张图片推理时间约 **10.3ms**。
+- **Model**: 核心模型采用 YOLOv8s-768，测试集 mAP50 达到 **0.9698**，mAP50-95 达到 **0.9300**。
+- **Dataset**: 本地实验数据集包含 395 张古钱币图像，按 YOLO 格式组织为训练集、验证集和测试集。
+- **GUI**: 基于 PySide6 开发，支持图片上传、结果渲染、置信度阈值调节和结果保存。
+- **Knowledge Base**: 内置六类古钱币历史知识说明，实现“识别+科普”的演示效果。
 
 ## 📊 Performance (模型性能对比)
 
-基于 `data2_grouped/test` 的统一评估结果：
+基于本地 `data2_grouped/test` 的统一评估结果：
 
 | 模型版本              | 输入尺寸 | mAP50     | mAP50-95  | Precision | Recall | 推理速度 (ms) |
 |:------------------|:-----|:----------|:----------|:----------|:-------|:----------|
-| **Release (推荐)** | 768  | **0.9729** | **0.9324** | 0.9351    | 0.9626 | 10.3      |
-| YOLOv8s           | 640  | 0.9531    | 0.8991    | 0.8676    | 0.9336 | 8.2       |
-| YOLOv8n           | 640  | 0.9187    | 0.8885    | 0.9286    | 0.8924 | 6.4       |
+| **Release (推荐)** | 768  | **0.9698** | **0.9300** | 0.9524    | 0.9678 | 约 10ms  |
+| YOLOv8n           | 768  | 0.9142    | 0.8663    | 0.8241    | 0.9423 | 约 7ms   |
+| YOLOv8s           | 640  | 0.9596    | 0.8943    | 0.9170    | 0.9310 | 约 10ms  |
+| YOLOv8n           | 640  | 0.9271    | 0.8989    | 0.9178    | 0.8627 | 约 8ms   |
 
 ## 📂 Directory Structure (项目结构)
 
@@ -44,13 +47,17 @@
 .
 ├── best_models/          # 发布版模型权重
 ├── config/               # 数据集配置文件 (data.yaml)
-├── archive/              # 旧数据、原始导出和旧实验结果归档
-├── data2_grouped/        # 按原始图片编号重划分后的训练数据集
+├── data2_grouped/        # 本地训练/验证/测试数据集（不上传）
 ├── runs/                 # 实验日志与评估图表 (PR曲线、混淆矩阵)
+├── samples/              # GUI与预测演示图片
+├── archive/              # 旧数据、原始导出和旧实验结果归档
 ├── main_gui.py           # 【核心】GUI 桌面系统启动脚本
 ├── train.py              # 模型训练脚本
+├── dataset_check.py      # 数据集图片、标签和边界框检查脚本
 ├── compare_models.py     # 模型性能对比评估脚本
-└── requirements.txt      # 环境依赖清单
+├── predict.py            # 命令行预测脚本
+├── pyproject.toml        # 项目依赖配置
+└── uv.lock               # 依赖锁定文件
 ```
 
 ## 🛠️ Usage (常用命令)
@@ -85,12 +92,6 @@ uv --cache-dir .uv-cache run --no-sync python dataset_check.py
 uv --cache-dir .uv-cache run --no-sync python dataset_check.py --report data2_grouped_report.txt
 ```
 
-重新生成无跨集合泄漏的数据集：
-
-```bash
-uv --cache-dir .uv-cache run --no-sync python split_dataset_by_origin.py --source archive/slim_20260427/data2 --output data2_grouped
-```
-
 训练模型：
 
 ```bash
@@ -115,4 +116,4 @@ uv --cache-dir .uv-cache run --no-sync python compare_models.py
 best_models/coin_v8s_768_best.pt
 ```
 
-旧数据集、原始导出、历史实验和过时权重已移动到 `archive/legacy_20260427/` 与 `archive/slim_20260427/`，当前训练、预测和 GUI 不依赖其中内容。
+旧数据集、原始导出、历史实验、历史整理脚本和过时权重主要用于备份追溯；当前训练、预测和 GUI 默认流程不依赖这些归档内容。

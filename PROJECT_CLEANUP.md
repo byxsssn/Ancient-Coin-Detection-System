@@ -1,29 +1,30 @@
 # Project Cleanup Notes
 
-## Keep
+## Current Release Scope
 
-- `data2_grouped/`: cleaned training dataset with no image/label mismatches and no original-id split leakage.
-- `best_models/coin_v8s_768_best.pt`: current release model, selected for best test mAP.
-- `runs/detect/coin_v8s_768/weights/best.pt`: source training run for the release model.
-- `samples/`: small demo image set for GUI and prediction smoke tests.
-- `archive/legacy_20260427/`: old datasets, old runs, and isolated legacy weights kept for reference.
-- `archive/slim_20260427/`: original `data2/`, old comparison runs, and unused pretrained weights.
+- `config/data.yaml`: dataset entry point for training, validation and prediction.
+- `best_models/`: selected model weights for GUI use and result reproduction.
+- `pretrained/`: YOLOv8 pretrained weights needed to rerun training.
+- `runs/detect/`: current experiment outputs, including training curves, PR curves, confusion matrices and prediction examples.
+- `docs/assets/` and `论文/配图建议/`: figures used by the README and thesis.
+- `samples/`: small demo image set for GUI and command-line prediction.
+- `论文/李业恺-22智能01-B20220307112-毕业论文正文.docx`: current thesis document.
 
-## Optional Archive Or Delete
+## Not Uploaded
 
-These are useful for history, but not required for the current default workflow:
+- `.venv/`, `.uv-cache/`, `__pycache__/` and `outputs/`: local runtime caches or generated demo outputs.
+- `data2_grouped/`: local training, validation and test dataset. The thesis records its scale and split, but the raw training images are not uploaded to GitHub.
+- `archive/`: old datasets, old runs and unused historical weights. It is useful locally, but too large and not required by the current workflow.
+- `论文/*_修改前备份_*.docx`: local thesis backup copies.
+- `论文/学长论文.pdf`: reference material, not part of this project deliverable.
+- `data2_grouped/**/labels.cache`: generated YOLO cache files that can be rebuilt.
 
-- `archive/legacy_20260427/data/`: old dataset with image/label mismatches.
-- `archive/slim_20260427/data2/`: original Roboflow export; keep it if you want to regenerate `data2_grouped/`.
-- `archive/legacy_20260427/runs/detect/*`: older experiments.
-- `archive/slim_20260427/pretrained/`: unused pretrained weights.
-- `archive/slim_20260427/best_models/v8_best_899.pt`: old fallback deployment model.
-
-## Regenerate
+## Reproduce
 
 ```bash
-uv --cache-dir .uv-cache run --no-sync python split_dataset_by_origin.py --source archive/slim_20260427/data2 --output data2_grouped
-uv --cache-dir .uv-cache run --no-sync python dataset_check.py --report data2_grouped_report.txt
+# Requires local data2_grouped/ to be present.
+uv --cache-dir .uv-cache run --no-sync python dataset_check.py
 uv --cache-dir .uv-cache run --no-sync python train.py --model pretrained/yolov8s.pt --name coin_v8s_768 --imgsz 768 --batch 8 --exist-ok
 uv --cache-dir .uv-cache run --no-sync python compare_models.py --split test
+uv --cache-dir .uv-cache run --no-sync python main_gui.py
 ```
