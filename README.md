@@ -9,7 +9,7 @@
 本项目是一个集**深度学习目标检测**与**历史文化科普**于一体的古钱币智能识别系统。
 系统基于 **YOLOv8** 算法，面向六类中国古代钱币图像完成目标检测。通过 **PySide6** 驱动的 GUI 界面，用户可实现图片上传、检测结果展示、置信度调节、结果保存及历史背景查询。
 
-当前实验数据集由 395 张古钱币图像组成，使用 Roboflow 完成目标框标注，并划分为训练集 278 张、验证集 60 张、测试集 57 张。项目没有额外生成本地离线增强图片，训练阶段使用 YOLOv8 默认训练流程中的在线增强策略。原始训练图片仅保留在本地 `data2_grouped/`，不随 GitHub 仓库上传。
+当前实验数据集由 395 张古钱币图像组成，使用 Roboflow 完成目标框标注，并划分为训练集 278 张、验证集 60 张、测试集 57 张。项目没有额外生成本地离线增强图片，训练阶段使用 YOLOv8 默认训练流程中的在线增强策略。原始训练图片仅保留在本地 `data/`，不随 GitHub 仓库上传。
 
 ## 📸 System Showcase (功能演示)
 
@@ -32,7 +32,7 @@
 
 ## 📊 Performance (模型性能对比)
 
-基于本地 `data2_grouped/test` 的统一评估结果：
+基于本地 `data/test` 的统一评估结果：
 
 | 模型版本              | 输入尺寸 | mAP50     | mAP50-95  | Precision | Recall | 推理速度 (ms) |
 |:------------------|:-----|:----------|:----------|:----------|:-------|:----------|
@@ -47,7 +47,7 @@
 .
 ├── best_models/          # 发布版模型权重
 ├── config/               # 数据集配置文件 (data.yaml)
-├── data2_grouped/        # 本地训练/验证/测试数据集（不上传）
+├── data/                 # 本地训练/验证/测试数据集（不上传）
 ├── runs/                 # 实验日志与评估图表 (PR曲线、混淆矩阵)
 ├── samples/              # GUI与预测演示图片
 ├── archive/              # 旧数据、原始导出和旧实验结果归档
@@ -89,7 +89,7 @@ uv --cache-dir .uv-cache run --no-sync python dataset_check.py
 生成完整数据集检查报告：
 
 ```bash
-uv --cache-dir .uv-cache run --no-sync python dataset_check.py --report data2_grouped_report.txt
+uv --cache-dir .uv-cache run --no-sync python dataset_check.py --report data_report.txt
 ```
 
 训练模型：
@@ -110,7 +110,7 @@ uv --cache-dir .uv-cache run --no-sync python predict.py --source samples --save
 uv --cache-dir .uv-cache run --no-sync python compare_models.py
 ```
 
-当前默认数据集是 `data2_grouped/`，配置入口为 `config/data.yaml`。当前默认推理模型是发布版 YOLOv8s 768：
+当前默认数据集是本地 `data/`，配置入口为 `config/data.yaml`。当前默认推理模型是发布版 YOLOv8s 768：
 
 ```text
 best_models/coin_v8s_768_best.pt

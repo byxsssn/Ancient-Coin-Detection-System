@@ -14,7 +14,7 @@ IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
 def parse_args():
     parser = argparse.ArgumentParser(description="Rebuild a YOLO dataset without augmented-image split leakage.")
     parser.add_argument("--source", default="archive/slim_20260427/data2", help="Source dataset directory.")
-    parser.add_argument("--output", default="data2_grouped", help="Output dataset directory.")
+    parser.add_argument("--output", default="data", help="Output dataset directory.")
     parser.add_argument("--train", type=float, default=0.7)
     parser.add_argument("--val", type=float, default=0.15)
     parser.add_argument("--test", type=float, default=0.15)

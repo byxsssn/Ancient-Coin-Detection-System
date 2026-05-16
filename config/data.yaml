@@ -1,4 +1,4 @@
-path: ../data2_grouped
+path: ../data
 
 train: train/images
 val: valid/images
