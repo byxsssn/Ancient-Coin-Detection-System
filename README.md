@@ -36,16 +36,16 @@
 
 | 模型版本              | 输入尺寸 | mAP50     | mAP50-95  | Precision | Recall | 推理速度 (ms) |
 |:------------------|:-----|:----------|:----------|:----------|:-------|:----------|
-| **Release (推荐)** | 768  | **0.9698** | **0.9300** | 0.9524    | 0.9678 | 约 10ms  |
-| YOLOv8n           | 768  | 0.9142    | 0.8663    | 0.8241    | 0.9423 | 约 7ms   |
-| YOLOv8s           | 640  | 0.9596    | 0.8943    | 0.9170    | 0.9310 | 约 10ms  |
-| YOLOv8n           | 640  | 0.9271    | 0.8989    | 0.9178    | 0.8627 | 约 8ms   |
+| **YOLOv8s (推荐)** | 768  | **0.9698** | **0.9300** | 0.9524    | 0.9678 | 约 9ms   |
+| YOLOv8n           | 768  | 0.9142    | 0.8663    | 0.8241    | 0.9423 | 约 8ms   |
+| YOLOv8s           | 640  | 0.9531    | 0.8991    | 0.8676    | 0.9336 | 约 10ms  |
+| YOLOv8n           | 640  | 0.9187    | 0.8885    | 0.9286    | 0.8924 | 约 6ms   |
 
 ## 📂 Directory Structure (项目结构)
 
 ```text
 .
-├── best_models/          # 发布版模型权重
+├── best_models/          # 四组对比模型与发布版权重
 ├── config/               # 数据集配置文件 (data.yaml)
 ├── data/                 # 本地训练/验证/测试数据集（不上传）
 ├── runs/                 # 实验日志与评估图表 (PR曲线、混淆矩阵)
@@ -110,7 +110,7 @@ uv --cache-dir .uv-cache run --no-sync python predict.py --source samples --save
 uv --cache-dir .uv-cache run --no-sync python compare_models.py
 ```
 
-当前默认数据集是本地 `data/`，配置入口为 `config/data.yaml`。当前默认推理模型是发布版 YOLOv8s 768：
+当前默认数据集是本地 `data/`，配置入口为 `config/data.yaml`。`best_models/` 里已经整理出四组可直接复现的对比权重，`compare_models.py` 默认就会按各自输入尺寸评估它们。当前 GUI 默认推理模型仍然是发布版 YOLOv8s 768：
 
 ```text
 best_models/coin_v8s_768_best.pt
