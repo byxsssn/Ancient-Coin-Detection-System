@@ -3,11 +3,13 @@
 [![Python](https://img.shields.io/badge/Python-3.10-blue.svg)](https://www.python.org/)
 [![YOLOv8](https://img.shields.io/badge/Model-YOLOv8s-green.svg)](https://github.com/ultralytics/ultralytics)
 [![PySide6](https://img.shields.io/badge/GUI-PySide6-orange.svg)](https://pypi.org/project/PySide6/)
+[![FastAPI](https://img.shields.io/badge/API-FastAPI-009688.svg)](https://fastapi.tiangolo.com/)
+[![React](https://img.shields.io/badge/Web-React-61dafb.svg)](https://react.dev/)
 
 ## 📝 Introduction (项目简介)
 
 本项目是一个集**深度学习目标检测**与**历史文化科普**于一体的古钱币智能识别系统。
-系统基于 **YOLOv8** 算法，面向六类中国古代钱币图像完成目标检测。通过 **PySide6** 驱动的 GUI 界面，用户可实现图片上传、检测结果展示、置信度调节、结果保存及历史背景查询。
+系统基于 **YOLOv8** 算法，面向六类中国古代钱币图像完成目标检测。项目保留 **PySide6** 桌面 GUI，同时新增 **FastAPI + React** Web 工作台，用户可实现图片上传、检测结果展示、置信度调节、结果保存及历史背景查询。
 
 当前实验数据集由 395 张古钱币图像组成，使用 Roboflow 完成目标框标注，并划分为训练集 278 张、验证集 60 张、测试集 57 张。项目没有额外生成本地离线增强图片，训练阶段使用 YOLOv8 默认训练流程中的在线增强策略。原始训练图片仅保留在本地 `data/`，不随 GitHub 仓库上传。
 
@@ -28,6 +30,7 @@
 - **Model**: 核心模型采用 YOLOv8s-768，测试集 mAP50 达到 **0.9698**，mAP50-95 达到 **0.9300**。
 - **Dataset**: 本地实验数据集包含 395 张古钱币图像，按 YOLO 格式组织为训练集、验证集和测试集。
 - **GUI**: 基于 PySide6 开发，支持图片上传、结果渲染、置信度阈值调节和结果保存。
+- **Web**: 基于 FastAPI 和 React/Vite 新增本机浏览器工作台，后端负责 YOLO 推理，前端负责上传、预览、检测列表、科普详情和结果下载。
 - **Knowledge Base**: 内置六类古钱币历史知识说明，实现“识别+科普”的演示效果。
 
 ## 📊 Performance (模型性能对比)
@@ -51,6 +54,8 @@
 ├── runs/                 # 实验日志与评估图表 (PR曲线、混淆矩阵)
 ├── samples/              # GUI与预测演示图片
 ├── archive/              # 旧数据、原始导出和旧实验结果归档
+├── web_backend/          # FastAPI 推理服务
+├── frontend/             # React/Vite Web 工作台
 ├── main_gui.py           # 【核心】GUI 桌面系统启动脚本
 ├── train.py              # 模型训练脚本
 ├── dataset_check.py      # 数据集图片、标签和边界框检查脚本
@@ -79,6 +84,22 @@ uv --cache-dir .uv-cache run --no-sync python dataset_check.py
 ```bash
 uv --cache-dir .uv-cache run --no-sync python main_gui.py
 ```
+
+启动 Web 后端：
+
+```bash
+uv --cache-dir .uv-cache run --no-sync uvicorn web_backend.app:app --host 127.0.0.1 --port 8000
+```
+
+启动 Web 前端：
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+默认前端地址为 `http://127.0.0.1:5173`，开发期会将 `/api` 请求代理到 `http://127.0.0.1:8000`。如果先执行 `npm run build`，FastAPI 会在 `frontend/dist` 存在时托管构建后的静态页面。
 
 检查数据集图片与标签是否匹配：
 

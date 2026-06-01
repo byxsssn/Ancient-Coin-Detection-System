@@ -10,6 +10,11 @@ opencv-python==4.13.0.92
 # 界面开发框架
 pyside6==6.11.0
 
+# Web 前后端接口
+fastapi==0.109.0
+uvicorn==0.27.0
+python-multipart==0.0.9
+
 # 数据处理与绘图
 pandas==2.3.3
 matplotlib==3.10.8
