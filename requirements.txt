@@ -7,9 +7,6 @@ numpy==2.2.6
 ultralytics==8.4.31
 opencv-python==4.13.0.92
 
-# 界面开发框架
-pyside6==6.11.0
-
 # Web 前后端接口
 fastapi==0.109.0
 uvicorn==0.27.0
