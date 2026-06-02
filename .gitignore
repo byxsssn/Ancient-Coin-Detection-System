@@ -6,6 +6,9 @@ data2/
 data2_grouped/
 archive/
 outputs/
+frontend/dist/
+frontend/node_modules/
+.codex-*.log
 docx_render_review/
 docx_trial_render/
 aigc*.txt
