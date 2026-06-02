@@ -67,39 +67,76 @@
 
 ## 🛠️ Usage (常用命令)
 
-推荐使用 `uv` 运行项目：
+### 1. 环境准备
+
+推荐使用 `uv` 管理 Python 环境，并使用 Node.js 运行 Web 前端：
 
 ```bash
 uv --cache-dir .uv-cache sync
 ```
 
-如果已经存在 `.venv`，日常运行可以跳过同步，避免重复下载依赖：
+如果已经存在 `.venv`，日常运行可以跳过同步，避免重复下载依赖。前端依赖只需要在首次运行或 `package.json` 变更后安装：
 
 ```bash
 uv --cache-dir .uv-cache run --no-sync python dataset_check.py
+cd frontend
+npm install
 ```
 
-启动桌面识别系统：
+项目默认推理权重为：
+
+```text
+best_models/coin_v8s_768_best.pt
+```
+
+如果该文件不存在，桌面端和 Web 后端都无法完成真实检测。
+
+### 2. 启动桌面 GUI
 
 ```bash
 uv --cache-dir .uv-cache run --no-sync python main_gui.py
 ```
 
-启动 Web 后端：
+桌面端适合本机演示，支持图片选择、检测结果渲染、阈值调节和结果保存。
+
+### 3. 启动 Web 工作台
+
+开发模式需要同时启动 FastAPI 后端和 Vite 前端。
+
+后端服务：
 
 ```bash
 uv --cache-dir .uv-cache run --no-sync uvicorn web_backend.app:app --host 127.0.0.1 --port 8000
 ```
 
-启动 Web 前端：
+前端服务：
 
 ```bash
 cd frontend
-npm install
 npm run dev
 ```
 
-默认前端地址为 `http://127.0.0.1:5173`，开发期会将 `/api` 请求代理到 `http://127.0.0.1:8000`。如果先执行 `npm run build`，FastAPI 会在 `frontend/dist` 存在时托管构建后的静态页面。
+默认前端地址为 `http://127.0.0.1:5173`，开发期会将 `/api` 请求代理到 `http://127.0.0.1:8000`。
+
+生产构建后可以只启动 FastAPI，由后端托管 `frontend/dist` 静态页面：
+
+```bash
+cd frontend
+npm run build
+cd ..
+uv --cache-dir .uv-cache run --no-sync uvicorn web_backend.app:app --host 127.0.0.1 --port 8000
+```
+
+此时浏览器访问 `http://127.0.0.1:8000` 即可进入 Web 工作台。
+
+Web API 入口：
+
+| 方法 | 路径          | 说明 |
+|:-----|:--------------|:-----|
+| GET  | `/api/health` | 检查服务状态、模型文件是否存在、类别列表 |
+| POST | `/api/detect` | 上传图片并按指定置信度执行检测，返回画框结果和科普说明 |
+
+### 4. 数据集、训练与评估
 
 检查数据集图片与标签是否匹配：
 
